@@ -1,0 +1,166 @@
+Master Database:
+In the master database, we only have one table (tbl_tenant_master), where all tenant information is stored in the table.
+
+create database master_db;
+
+CREATE TABLE  `master_db`.`tbl_tenant_master` (
+`tenant_client_id` int(10) unsigned NOT NULL,
+`db_name` varchar(50) NOT NULL,
+`url` varchar(100) NOT NULL,
+`user_name` varchar(50) NOT NULL,
+`password` varchar(100) NOT NULL,
+`driver_class` varchar(100) NOT NULL,
+`status` varchar(10) NOT NULL,
+PRIMARY KEY (`tenant_client_id`) USING BTREE
+) ENGINE=InnoDB;
+
+use master_db;
+INSERT INTO tbl_tenant_master VALUES (100,"testdb","jdbc:mysql://localhost:3306/testdb?allowPublicKeyRetrieval=true&useSSL=false","root","root","com.mysql.cj.jdbc.Driver","Active");
+INSERT INTO tbl_tenant_master VALUES (200,"testdb_pgs","jdbc:postgresql://localhost:5432/testdb_pgs","postgres","root","org.postgresql.Driver","Active");
+
+UPDATE tbl_tenant_master SET driver_class = "org.postgresql.Driver" WHERE tenant_client_id=200;
+
+use master_db;
+INSERT INTO tbl_tenant_master VALUES (300,"testdb2","jdbc:mysql://localhost:3306/testdb2?allowPublicKeyRetrieval=true&useSSL=false","root","root","com.mysql.cj.jdbc.Driver","Active");
+
+UPDATE tbl_tenant_master SET db_name = "testdb2", url="jdbc:mysql://localhost:3306/testdb2?allowPublicKeyRetrieval=true&useSSL=false" WHERE tenant_client_id=300;
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+Tenant Database (1) in MySQL:
+Create a table for client login authentication(tbl_user).
+Create another table (tbl_product) to retrieve data using a JWT (for Authorization checks).
+
+create database testdb;
+
+DROP TABLE IF EXISTS `testdb`.`tbl_user`;
+
+CREATE TABLE  `testdb`.`tbl_user` (
+  `user_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `full_name` varchar(100) NOT NULL,
+  `gender` varchar(10) NOT NULL,
+  `user_name` varchar(50) NOT NULL,
+  `password` varchar(100) NOT NULL,
+  `status` varchar(10) NOT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB;
+
+
+DROP TABLE IF EXISTS `testdb`.`tbl_product`;
+
+CREATE TABLE  `testdb`.`tbl_product` (
+  `product_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `product_name` varchar(50) NOT NULL,
+  `quantity` int(10) unsigned NOT NULL DEFAULT '0',
+  `size` varchar(3) NOT NULL,
+  PRIMARY KEY (`product_id`)
+) ENGINE=InnoDB;
+
+
+use testdb;
+INSERT INTO tbl_user VALUES (1000,"Rishabh Sharma","Male","ACV1254","password","Active");
+UPDATE tbl_user SET user_id = 1000 WHERE user_name="ACV1254";
+
+INSERT INTO tbl_product VALUES (503,"Blazer",10,"42");
+INSERT INTO tbl_product VALUES (504,"Lungi",30,"XXL");
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+Tenant Database (2) in PostgreSQL:
+Create a table for client login authentication (tbl_user).
+Create another table (tbl_product) to retrieve data using a JWT (for authorization checks).
+
+create database testdb_pgs;
+\c testdb_pgs;
+CREATE TABLE public.tbl_user
+(
+    user_id integer NOT NULL,
+    full_name character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    gender character varying(10) COLLATE pg_catalog."default" NOT NULL,
+    user_name character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    password character varying(100) COLLATE pg_catalog."default" NOT NULL,
+    status character varying(10) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT tbl_user_pkey PRIMARY KEY (user_id)
+);
+
+
+CREATE TABLE public.tbl_product
+(
+    product_id integer NOT NULL,
+    product_name character varying(50) COLLATE pg_catalog."default" NOT NULL,
+    quantity integer NOT NULL DEFAULT 0,
+    size character varying(3) COLLATE pg_catalog."default" NOT NULL,
+    CONSTRAINT tbl_product_pkey PRIMARY KEY (product_id)
+);
+
+\c testdb_pgs;
+INSERT INTO tbl_user VALUES (2000, 'Coderish Coder', 'Male', 'ACV9999', 'postgres_pass123', 'Active');
+INSERT INTO tbl_user (user_id,full_name,gender,user_name,password,status) (2000, 'Coderish Coder', 'Male', 'ACV9999', 'postgres_pass123', 'Active');
+
+INSERT INTO tbl_product VALUES (501, 'T-Shirt', 10, 'M');
+INSERT INTO tbl_product VALUES (502, 'Trouser', 15, '32W');
+
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+Tenant Database (3) in MySQL:
+Create a table for client login authentication(tbl_user).
+Create another table (tbl_product) to retrieve data using a JWT (for Authorization checks).
+
+create database testdb2;
+
+DROP TABLE IF EXISTS `testdb2`.`tbl_user`;
+
+CREATE TABLE  `testdb2`.`tbl_user` (
+  `user_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `full_name` varchar(100) NOT NULL,
+  `gender` varchar(10) NOT NULL,
+  `user_name` varchar(50) NOT NULL,
+  `password` varchar(100) NOT NULL,
+  `status` varchar(10) NOT NULL,
+  PRIMARY KEY (`user_id`)
+) ENGINE=InnoDB;
+
+
+DROP TABLE IF EXISTS `testdb2`.`tbl_product`;
+
+CREATE TABLE  `testdb2`.`tbl_product` (
+  `product_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `product_name` varchar(50) NOT NULL,
+  `quantity` int(10) unsigned NOT NULL DEFAULT '0',
+  `size` varchar(3) NOT NULL,
+  PRIMARY KEY (`product_id`)
+) ENGINE=InnoDB;
+
+
+
+use testdb2;
+INSERT INTO tbl_user VALUES (3000,"Rishi Sharma","Male","ACV1200","diff_pass123","Active");
+
+INSERT INTO tbl_product VALUES (505,"Kurta",20,"XL");
+INSERT INTO tbl_product VALUES (506,"Pyjamas",25,"S");
+
+
