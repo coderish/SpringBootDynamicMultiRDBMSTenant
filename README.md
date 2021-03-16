@@ -5,5 +5,5 @@
 - mysql -uroot -proot master_db
 
 
-- docker run --name postgres-tenant -e POSTGRES_PASSWORD=root -d postgres
+- docker run -p 5432:5432 --name postgres-tenant -e POSTGRES_PASSWORD=root -d postgres
 - docker exec -it postgres-tenant psql -U postgres testdb_pgs
