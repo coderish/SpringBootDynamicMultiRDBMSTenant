@@ -1,0 +1,63 @@
+version: "3.7"
+services:
+  tenant-master-database-service:
+    image: "mysql"
+    container_name: tenant-master-database
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_DATABASE=master_db
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - "./scripts/master-schema.sql:/docker-entrypoint-initdb.d/1.sql"
+      - "./scripts/master-data.sql:/docker-entrypoint-initdb.d/2.sql"
+#    networks:
+#      - employee-mysql
+
+  tenant-1-mysql-database-service:
+    image: "mysql"
+    container_name: tenant-1-mysql-database
+    restart: always
+    ports:
+      - 3307:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_DATABASE=testdb
+    volumes:
+      - "./scripts/tenant-1-schema.sql:/docker-entrypoint-initdb.d/3.sql"
+      - "./scripts/tenant-1-data.sql:/docker-entrypoint-initdb.d/4.sql"
+
+  tenant-2-postgres-database-service:
+    image: "postgres"
+    container_name: tenant-2-postgres-database
+    restart: always
+    ports:
+      - 3308:5432
+    environment:
+      - POSTGRES_ROOT_PASSWORD=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DATABASE=testdb_pgs
+    volumes:
+      - "./scripts/tenant-2-schema.sql:/docker-entrypoint-initdb.d/5.sql"
+      - "./scripts/tenant-2-data.sql:/docker-entrypoint-initdb.d/6.sql"
+
+  multi-RDBMS-tenant-service:
+    image: spring-boot-dynamic-multi-rdbms-tenant
+    container_name: multi-rdbs-tenant-service
+    build: .
+    ports:
+      - 9091:8080
+#    networks:
+#      - employee-mysql
+    restart: always
+#    restart: on-failure
+    depends_on:
+      - tenant-master-database-service
+      - tenant-1-mysql-database-service
+      - tenant-2-postgres-database-service
+
+#networks:
+#  employee-mysql:

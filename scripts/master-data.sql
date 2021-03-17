@@ -1,0 +1,2 @@
+INSERT INTO tbl_tenant_master VALUES (100,"testdb","jdbc:mysql://tenant-1-mysql-database-service:3306/testdb?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false","root","root","com.mysql.cj.jdbc.Driver","Active");
+INSERT INTO tbl_tenant_master VALUES (200,"testdb_pgs","jdbc:postgresql://tenant-2-postgres-database-service:5432/testdb_pgs","postgres","root","org.postgresql.Driver","Active");
