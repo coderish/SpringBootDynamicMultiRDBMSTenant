@@ -36,7 +36,14 @@ public class SpringBootDynamicMultiRDBMSTenantApplication {
 //		Password is         : diff_pass123
 //		Encoded Password is : $2a$10$9yEhjj8AZ48XlKl71Bnk.eqlg.HX5/CS2i03x3AE9KBflhgj5HbGK
 
-		*/
+		password = "extra_pass123"; // ACV0000
+		encodedPassword = passwordEncoder.encode(password);
+		System.out.println();
+		System.out.println("Password is         : " + password);
+		System.out.println("Encoded Password is : " + encodedPassword);
+//		Password is         : extra_pass123
+//		Encoded Password is : $2a$10$ylaVSNzRqll9NWnuDb9qcufY864X49jk9rgd0k7r/v.1WvbmD7rIG
+*/
 	}
 
 }

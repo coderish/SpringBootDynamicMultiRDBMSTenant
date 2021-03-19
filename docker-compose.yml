@@ -44,20 +44,36 @@ services:
       - "./scripts/tenant-2-schema.sql:/docker-entrypoint-initdb.d/5.sql"
       - "./scripts/tenant-2-data.sql:/docker-entrypoint-initdb.d/6.sql"
 
+  tenant-3-mysql-database-service:
+    image: "mysql"
+    container_name: tenant-3-mysql-database
+    restart: always
+    ports:
+      - 3309:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_PASSWORD=root
+      - MYSQL_DATABASE=testdb2
+    volumes:
+      - "./scripts/tenant-3-schema.sql:/docker-entrypoint-initdb.d/7.sql"
+      - "./scripts/tenant-3-data.sql:/docker-entrypoint-initdb.d/8.sql"
+
   multi-RDBMS-tenant-service:
     image: spring-boot-dynamic-multi-rdbms-tenant
     container_name: multi-rdbs-tenant-service
     build: .
     ports:
       - 9091:8080
-#    networks:
-#      - employee-mysql
     restart: always
 #    restart: on-failure
+#    networks:
+#      - employee-mysql
     depends_on:
       - tenant-master-database-service
       - tenant-1-mysql-database-service
       - tenant-2-postgres-database-service
+      - tenant-3-mysql-database-service
+#    command: tenant-master-database-service:3306 tenant-1-mysql-database-service:3306 tenant-2-postgres-database-service:5432 tenant-1-mysql-database-service:3306
 
 #networks:
 #  employee-mysql:
